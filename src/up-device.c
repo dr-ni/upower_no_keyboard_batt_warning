@@ -63,6 +63,16 @@ update_warning_level (UpDevice *device)
 	UpDeviceLevel warning_level;
 	UpExportedDevice *skeleton = UP_EXPORTED_DEVICE (device);
 
+        /* UN: Disable warning notifications for keyboard with rechargeable batteries */
+        int type = up_exported_device_get_type_ (skeleton);
+        int state = up_exported_device_get_state(skeleton);
+        if (type == UP_DEVICE_KIND_KEYBOARD && state == UP_DEVICE_STATE_DISCHARGING) {
+            warning_level = UP_DEVICE_LEVEL_NONE;
+            up_exported_device_set_warning_level (skeleton, warning_level);
+            return;
+        }
+
+
 	/* Not finished setting up the object? */
 	if (device->priv->daemon == NULL)
 		return;
